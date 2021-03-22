@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>DataShare</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="upload.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    <script src="index.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark">
+      <a class="navbar-brand" href="index.html">DataShare</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse bg-dark" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">主页</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="upload.html">上传数据集</a>
+          </li>
+        </ul>
+        <div class="input-group col-sm-3" id="search-box">
+          <input class="form-control" id="search-id" type="search" placeholder="数据集ID">
+          <span class="input-group-btn">
+            <button class="btn btn-outline-light" id="search-btn">搜索</button>
+          </span>
+        </div>
+      </div>
+    </nav>
+    <br>
+    <br>
+
+    <div class="container">
+      <h3>发布数据集</h3>
+      <div class="row">
+        <form class="col-sm-8" id="dataset-info">
+          <div class="form-group">
+            <label for="dataset-name">名称</label>
+            <input type="text" class="form-control" id="dataset-name" name="dataset-name" placeholder="输入数据集名称" required="required"></input>
+          </div>
+          <div class="form-group">
+            <label for="dataset-desc">描述</label>
+            <textarea class="form-control" id="dataset-desc" name="dataset-desc" rows="6" placeholder="输入数据集描述" required="required"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="dataset-file">数据文件</label>
+            <input type="file" class="form-control-file" id="dataset-file" name="dataset-file" required="required"></input>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">上传数据集</button>
+          </div>
+        </form>
+      </div>
+      <div style="display: none;" class="alert alert-success" id="msg">上传成功！3s后跳转至详情页...</div>
+    </div>
+  </body>
+</html>

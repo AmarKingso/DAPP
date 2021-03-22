@@ -4,58 +4,85 @@
     <meta charset="utf-8">
     <title>DataShare</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link href="https://cdn.bootcdn.net/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="index.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/aos/2.3.4/aos.js"></script>
     <script src="index.js"></script>
+    <script>
+      $(document).ready(function(){
+        AOS.init({
+          duration: 1000,
+          easing: 'ease-out-back',
+          once: true
+        });
+      }) 
+    </script>
   </head>
 
   <body>
-    <nav class="navbar navbar-expand-xl navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">DataShare</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse bg-dark" id="navbarNav">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="index.html">主页</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="search.html">查询数据集</a>
-          </li>
-        </ul>
-        <form class="form-inline" id="search-box">
-          <input class="form-control mr-sm-2" id="input-id" type="search" placeholder="数据集ID">
-          <button class="btn btn-outline-light" type="submit">搜索</button>
-        </form>
+    <header class="hero">
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark py-2">
+        <a class="navbar-brand" href="index.html">DataShare</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse bg-dark" id="navbarNav">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="index.html">主页</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="upload.html">上传数据集</a>
+            </li>
+          </ul>
+          <div class="input-group col-sm-3" id="search-box">
+            <input class="form-control" id="search-id" type="search" placeholder="数据集ID">
+            <span class="input-group-btn">
+              <button class="btn btn-outline-light" id="search-btn">搜索</button>
+            </span>
+          </div>
+        </div>
+      </nav>
+      <div clsss="row" id="hero-center">
+        <div class="col-sm-6 text-center text-white mx-auto">
+          <h1 class="aos-init" data-aos="fade-up">DataShare</h1>
+          <p class="aos-init" data-aos="fade-up" data-aos-delay="100">
+            一个基于区块链的数据共享平台。
+          </p>
+          <div class="row aos-init" data-aos="fade-up" data-aos-delay="200">
+            <a href="upload.html" class="btn btn-lg btn-outline-light mx-auto" role="button">开始上传</a>
+          </div>
+          <div class="row aos-init mt-3" data-aos="fade-up" data-aos-delay="300">
+            <button class="btn btn-lg btn-outline-light mx-auto" type="button" 
+            onclick="$('html').animate({scrollTop: $('header').height()}, 1200);">
+              浏览数据
+            </button>
+          </div>
+        </div>
       </div>
-    </nav>
-    <br>
-    <br>
-    <div class="container">
-      <h3>发布数据集</h3>
-      <div class="row">
-        <form class="col-sm-8" id="dataset-info">
-          <div class="form-group">
-            <label for="dataset-name">名称</label>
-            <input type="text" class="form-control" id="dataset-name" name="dataset-name" placeholder="输入数据集名称" required="required"></input>
+    </header>
+    <section class="data-section">
+      <div class="container">
+        <div class="row" id="data-list" data-aos-once="true">
+          <div class="col-6 col-sm-6 col-md-4 col-lg-3 px-2 mb-4 mb-lg-3 aos-init" 
+          data-aos="fade-up" data-aos-delay="0">
+            <div class="data-item-content">
+              <h4 id="item-name">名称</h4>
+              <h6 class="text-muted mb-3" id="item-uper">上传者<small class="text-muted" id="res-time">于上传</small></h6>
+              <p id="item-desc">描述</p>
+              <button class="btn btn-primary" id="item-btn" type="button">下载</button>
+              <br>
+              <small class="text-muted" id="item-downloads">下载量</small>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="dataset-desc">描述</label>
-            <textarea class="form-control" id="dataset-desc" name="dataset-desc" rows="6" placeholder="输入数据集描述" required="required"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="dataset-file">数据文件</label>
-            <input type="file" class="form-control-file" id="dataset-file" name="dataset-file" required="required"></input>
-          </div>
-          <div class="form-group">
-            <button type="submit" class="btn btn-primary">上传数据集</button>
-          </div>
-        </form>
+          
+        </div>
       </div>
-      <div style="display: none;" class="alert alert-success" id="msg">上传成功！</div>
-    </div>
+    </section>
+    <footer>
 
+    </footer>
   </body>
 </html>

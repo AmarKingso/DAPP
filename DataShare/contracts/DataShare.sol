@@ -34,4 +34,8 @@ contract DataShare{
         DataSet memory dataset = uperToAllDataSet[datasetIdToUper[_dataSetId]][_dataSetId];
         return (dataset.name, dataset.description, dataset.uper, dataset.dataLink, dataset.downloads, dataset.uploadTime, dataset.status);
     }
+
+    function getIndex() public view returns (uint){
+        return dataSetIndex;
+    }
 }
