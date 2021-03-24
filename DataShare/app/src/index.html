@@ -63,21 +63,15 @@
         </div>
       </div>
     </header>
-    <section class="data-section">
+    <section class="data-section" id="data-section">
       <div class="container">
-        <div class="row" id="data-list" data-aos-once="true">
-          <div class="col-6 col-sm-6 col-md-4 col-lg-3 px-2 mb-4 mb-lg-3 aos-init" 
-          data-aos="fade-up" data-aos-delay="0">
-            <div class="data-item-content">
-              <h4 id="item-name">名称</h4>
-              <h6 class="text-muted mb-3" id="item-uper">上传者<small class="text-muted" id="res-time">于上传</small></h6>
-              <p id="item-desc">描述</p>
-              <button class="btn btn-primary" id="item-btn" type="button">下载</button>
-              <br>
-              <small class="text-muted" id="item-downloads">下载量</small>
-            </div>
-          </div>
-          
+        <div class="row" id="data-list" data-aos-once="true"></div>
+        <div class="row my-3">
+          <ul class="custom-pagination mx-auto">
+            <li><a class="prev-page" href="#data-section" style="display:none;">上一页</a></li>
+            <li><a class="active" href="#data-section">1</a></li>
+            <strong class="prev-ellipsis" style="display:none;">...</strong>
+          </ul>
         </div>
       </div>
     </section>

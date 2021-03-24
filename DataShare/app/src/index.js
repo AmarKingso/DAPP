@@ -23,6 +23,8 @@ window.App = {
     // 得到用户地址
     const accounts = await web3.eth.getAccounts();
     this.account = accounts[0];
+
+    renderDataList();
     
     /* 将文件读取到缓冲区 */
     var reader;
@@ -58,9 +60,6 @@ window.App = {
       //console.log('yes!');
       let datasetId = new URLSearchParams(window.location.search).get('id');
       renderDetailPage(datasetId);
-    }
-    else{
-      console.log(window.location.href);
     }
   }
 };
@@ -140,7 +139,7 @@ function autoJumpAfterWaiting(){
 }
 
 function downloadFromIpfs(hash){
-  console.log('shot');
+  //console.log('shot');
   //根据请求的链接返回的blob下载文件
   var x = new XMLHttpRequest();
   x.open('GET', "http://localhost:8080/ipfs/" + hash, true);
@@ -198,5 +197,149 @@ function renderDetailPage(id){
 
 function timestampToDate(time){
   return new Date(parseInt(time) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');;
+}
+
+function renderDataList(){
+  var pagesCount = Math.ceil(App.maxIndex / 12);
+  var curPage = 1;
+
+  generatePagination(pagesCount);
+  // 初次加载
+  for(var i = 0; i < 12; i++){
+    if(App.maxIndex > (curPage - 1)*12 + i){
+      App.instance.getDataSet(App.maxIndex - i).then(res=>{
+        $('#data-list').append(buildDataItem(res));
+      });
+    }
+  }
+
+  $('.custom-pagination li a').click(function(){
+    var idx;
+    if($(this).hasClass('prev-page')){
+      curPage--;
+      idx = $('.custom-pagination li a.active').parent().index('.custom-pagination li') - 1;
+      adjustPagination($('.custom-pagination li:eq('+ idx +') a'), pagesCount);
+    }
+    else if($(this).hasClass('next-page')){
+      curPage++;
+      idx = $('.custom-pagination li a.active').parent().index('.custom-pagination li') + 1;
+      adjustPagination($('.custom-pagination li:eq('+ idx +') a'), pagesCount);
+    }
+    else if($(this).hasClass('active')){
+      return;
+    }
+    else{
+      curPage = Number($(this).html());
+      adjustPagination($(this), pagesCount);
+    }
+    changeItemContent(curPage);
+  });
+}
+
+function changeItemContent(curPage){
+  for(var i = 0; i < 12; i++){
+    if(App.maxIndex > (curPage - 1)*12 + i){
+      let item = $('.data-item-content').eq(i);
+      let content = item.children();
+      App.instance.getDataSet(App.maxIndex - (curPage - 1)*12 - i).then(res=>{
+        $(content[0]).html(res[0]);
+        $(content[1]).html(res[2]);
+        $(content[2]).html(timestampToDate(res[5].toString()));
+        $(content[3]).html(res[4] + '次下载');
+        $(content[4]).html(res[1]);
+        $(content[5]).attr('onclick', '').unbind('click').click(function(){downloadFromIpfs(res[3])});
+        item.parent().show();
+      });
+    }
+    else{
+      $('.data-item-content').eq(i).parent().hide();
+    }
+  }
+}
+
+function buildDataItem(dataInfo){
+  let item = $('<div class="col-12 col-sm-12 col-md-6 col-lg-6 px-2 mb-4 mb-lg-3 aos-init" \
+  data-aos="fade-up"></div>');
+  let content = $('<div class="data-item-content"></div>');
+  content.append('<h4 id="item-name">' + dataInfo[0] + '</h4>');
+  content.append('<p class="text-muted" id="item-uper">' + dataInfo[2] + '</p>');
+  content.append('<small class="text-muted" id="item-time">于 ' + timestampToDate(dataInfo[5].toString()) + '上传</small>')
+  content.append('<small class="text-muted" id="item-downloads"> | ' + dataInfo[4] + '次下载</small>');
+  content.append('<p id="item-desc">' + dataInfo[1] + '</p>');
+  let btn = $('<button class="btn btn-primary" id="item-btn" type="button">下载</button>');
+  btn.click(function(){downloadFromIpfs(dataInfo[3])});
+  content.append(btn);
+  item.append(content);
+  return item;
+}
+
+/* 生成初始分页 */
+function generatePagination(pagesCount){
+  if(pagesCount < 2){
+    return;
+  }
+
+  if(pagesCount <= 7){
+    for(var i = 2; i <= pagesCount; i++){
+      $('.custom-pagination').append('<li><a href="#data-section">' + i + '</a></li>');
+    }
+  }
+  else{
+    for(var i = 2; i <= 6; i++){
+      $('.custom-pagination').append('<li><a href="#data-section">' + i + '</a></li>');
+    }
+    $('.custom-pagination').append('<strong class="next-ellipsis">...</strong>');
+    $('.custom-pagination').append('<li><a href="#data-section">' + pagesCount + '</a></li>');
+  }
+  $('.custom-pagination').append('<li><a class="next-page" href="#data-section">下一页</a></li>');
+}
+
+/* 根据点击的页号调整分页样式 */
+function adjustPagination(obj, pagesCount){
+  var curPage = Number(obj.html());
+
+  $('.custom-pagination li a').removeClass('active');
+  if(pagesCount <= 7){
+    obj.addClass('active');
+  }
+  else{
+    if(curPage <= 4){
+      obj.addClass('active');
+      $('.prev-ellipsis').hide();
+      $('.next-ellipsis').show();
+      for(var i = 1; i <= 6; i++){
+        $('.custom-pagination li:eq(' + i + ') a').html(i);
+      }
+    }
+    else if(curPage >= pagesCount - 3){
+      obj.addClass('active');
+      $('.prev-ellipsis').show();
+      $('.next-ellipsis').hide();
+      for(var i = 2; i <= 6; i++){
+        $('.custom-pagination li:eq(' + i + ') a').html(pagesCount - (7 - i));
+      }
+    }
+    else{
+      $('.custom-pagination li:eq(4) a').addClass('active');
+      $('.prev-ellipsis').show();
+      $('.next-ellipsis').show();
+      for(var i = 2; i <= 6; i++){
+        $('.custom-pagination li:eq('+ i +') a').html(curPage + (i - 4));
+      }
+    }
+  }
+
+  if(curPage == 1){
+    $('.prev-page').hide();
+    $('.next-page').show();
+  }
+  else if(curPage == pagesCount){
+    $('.prev-page').show();
+    $('.next-page').hide();
+  }
+  else{
+    $('.prev-page').show();
+    $('.next-page').show();
+  }
 }
 
