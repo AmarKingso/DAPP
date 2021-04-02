@@ -4,13 +4,36 @@
     <meta charset="utf-8">
     <title>DataShare</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-fileinput/4.5.3/css/fileinput.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="upload.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-fileinput/4.5.3/js/fileinput.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-fileinput/4.5.3/js/locales/zh.min.js"></script>
     <script src="index.js"></script>
   </head>
 
   <body>
+    <div class="modal fade" id="set-name-modal" tabindex="-1" role="dialog" aria-labelledby="set-name-modal-label" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="set-name-modal-label">欢迎来到DataShare！</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>，欢迎来到本平台，你还未为自己命名哦，先为自己取个好听的名字，然后开启您的DataShare之旅吧！</p>
+            <input type="text" class="form-control" id="account-name" placeholder="取个好听的名字吧~" required="required">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="okay-btn">确定</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <nav class="navbar navbar-expand-xl navbar-dark bg-dark">
       <a class="navbar-brand" href="index.html">DataShare</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,12 +68,23 @@
             <input type="text" class="form-control" id="dataset-name" name="dataset-name" placeholder="输入数据集名称" required="required"></input>
           </div>
           <div class="form-group">
+            <label for="dataset-category">分类</label>
+            <select class="form-control" id="dataset-category" name="dataset-category">
+              <option>综合</option>
+              <option>科研或学术资料</option>
+              <option>娱乐资源</option>
+              <option>软件项目</option>
+              <option>数据集（数据挖掘）</option>
+              <option>其他</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="dataset-desc">描述</label>
             <textarea class="form-control" id="dataset-desc" name="dataset-desc" rows="6" placeholder="输入数据集描述" required="required"></textarea>
           </div>
           <div class="form-group">
             <label for="dataset-file">数据文件</label>
-            <input type="file" class="form-control-file" id="dataset-file" name="dataset-file" required="required"></input>
+            <input type="file" class="file" id="dataset-file" name="dataset-file" data-show-upload="false" data-show-preview="false" data-language="zh" required="required"></input>
           </div>
           <div class="form-group">
             <button type="submit" class="btn btn-primary">上传数据集</button>

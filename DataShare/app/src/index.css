@@ -34,6 +34,8 @@ html, body{
     -webkit-transition: all .5s ease-out;
     -o-transition: all .5s ease-out;
     transition: all .5s ease-out;
+    word-wrap : break-word;
+    overflow:hidden;
 }
 
 .data-item-content:hover{
@@ -48,6 +50,7 @@ p#item-uper{
 
 p#item-desc{
     margin-top: .5rem;
+    margin-bottom: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
