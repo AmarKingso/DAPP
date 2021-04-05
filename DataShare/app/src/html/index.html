@@ -33,7 +33,9 @@
           </div>
           <div class="modal-body">
             <p>，欢迎来到本平台，你还未为自己命名哦，先为自己取个好听的名字，然后开启您的DataShare之旅吧！</p>
-            <input type="text" class="form-control" id="account-name" placeholder="取个好听的名字吧~" required="required">
+            <input type="text" class="form-control" id="account-name" placeholder="取个好听的名字吧~(输入1-12个非空格字符)" required>
+            <div class="alert alert-success py-1 mt-1" role="alert" style="display: none;"><small>格式正确！</small></div>
+            <div class="alert alert-danger py-1 mt-1" role="alert" style="display: none;"><small>格式错误！请保证名字为1~12个非空格字符！</small></div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="okay-btn">确定</button>
@@ -55,6 +57,15 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="upload.html">上传数据集</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" id="usr-dp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">我的</a>
+              <div class="dropdown-menu" id="usr-menu">
+                <p class="dropdown-item my-0 disabled" id="usr-name">未注册</p>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" id="usr-upload" href="#">我的上传</a>
+                <a class="dropdown-item" id="usr-download" href="#">我的下载</a>
+              </div>
             </li>
           </ul>
           <div class="input-group col-sm-3" id="search-box">

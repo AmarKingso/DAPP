@@ -1,0 +1,65 @@
+html,body{
+    background-color: rgb(246, 246, 246);
+}
+
+.dropdown:hover{
+    background-color: rgb(64,72,91);
+}
+
+.dropdown:hover .dropdown-menu{
+    display: block;
+}
+
+#usr-menu{
+    background-color: rgb(64,72,91);
+}
+
+#usr-point{
+    color: #FF4081;
+}
+
+.dropdown-item{
+    color: rgb(216,216,216);
+}
+
+header{
+    background-color: rgb(73,74,95);
+}
+
+.data-section{
+    width: 100%;
+    padding: 60px 0px;
+    background-color: rgb(246,246,246);
+}
+
+.data-item-content{
+    position: relative;
+    top: 0;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    -moz-transition: all .5s ease-out;
+    -webkit-transition: all .5s ease-out;
+    -o-transition: all .5s ease-out;
+    transition: all .5s ease-out;
+    word-wrap : break-word;
+    overflow:hidden;
+}
+
+.data-item-content:hover{
+    top: -5px;
+    -webkit-box-shadow: 0 15px 30px 0 rgb(0 0 0 / 15%);
+    box-shadow: 0 15px 30px 0 rgb(0 0 0 / 15%);
+}
+
+p#item-uper{
+    margin-bottom: 0;
+}
+
+p#item-desc{
+    margin-top: .5rem;
+    margin-bottom: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

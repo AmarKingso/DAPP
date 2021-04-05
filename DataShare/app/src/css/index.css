@@ -3,6 +3,30 @@ html, body{
     overflow-x: hidden;
 }
 
+.dropdown{
+    display: none;
+}
+
+.dropdown:hover{
+    background-color: rgb(64,72,91);
+}
+
+.dropdown:hover .dropdown-menu{
+    display: block;
+}
+
+#usr-menu{
+    background-color: rgb(64,72,91);
+}
+
+#usr-point{
+    color: #FF4081;
+}
+
+.dropdown-item{
+    color: rgb(216,216,216);
+}
+
 .lead{
     font-size: 1.25rem;
     font-weight: 300;
@@ -21,7 +45,7 @@ html, body{
 .data-section{
     width: 100%;
     padding: 60px 0px;
-    background-color: rgb(248,249,250);
+    background-color: rgb(246,246,246);
 }
 
 .data-item-content{
