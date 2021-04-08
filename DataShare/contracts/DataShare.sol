@@ -2,7 +2,7 @@
 pragma solidity >=0.4.21;
 
 contract DataShare{
-    enum DataSetStatus { invalid, valid }
+    enum UserWithTheData { independent, downloaded, evaluated }
 
     uint dataSetIndex;
     mapping(uint => DataSet) dataSetCollection;       //id到数据的映射
@@ -10,9 +10,11 @@ contract DataShare{
     mapping(address => mapping(uint => bool)) hasDownloaded;    //用户是否下载了当前数据
     mapping(address => uint[]) userDownload;    //存储用户下载的所有数据
     mapping(address => UserInfo) users;      //用户列表
+    mapping(string => uint[]) dataByCategory;       //根据分类划分数据
 
     struct DataSet{
         uint id;
+        address addr;
         string name;
         string category;        //分类
         string description;     //描述
@@ -20,7 +22,6 @@ contract DataShare{
         string dataLink;        //数据集的链接
         uint downloads;         //下载量
         uint uploadTime;        //上传时间
-        DataSetStatus status;   //数据集状态
     }
 
     struct UserInfo{
@@ -38,8 +39,12 @@ contract DataShare{
       * 参数：账户名字
       */
     function setUser(string memory _name) public{
-        UserInfo memory user = UserInfo(_name, 0, true);
-        users[msg.sender] = user;
+        if(users[msg.sender].hasExist){
+            users[msg.sender].name = _name;
+        }
+        else{
+            users[msg.sender] = UserInfo(_name, 0, true);
+        }
     }
 
     /** 
@@ -56,9 +61,11 @@ contract DataShare{
       */
     function uploadData(string memory _name, string memory _category, string memory _description, string memory _dataLink, uint _point) public{
         dataSetIndex++;
-        DataSet memory dataset = DataSet(dataSetIndex, _name, _category, _description, users[msg.sender].name, _dataLink, 0, block.timestamp, DataSetStatus.valid);
+        DataSet memory dataset = DataSet(dataSetIndex, msg.sender, _name, _category, _description, users[msg.sender].name, _dataLink, 0, block.timestamp);
         dataSetCollection[dataSetIndex] = dataset;
+        dataByCategory[_category].push(dataSetIndex);
         uperAllUpload[msg.sender].push(dataSetIndex);
+        hasDownloaded[msg.sender][dataSetIndex] = true;
         users[msg.sender].point += _point;
     }
     
@@ -71,10 +78,11 @@ contract DataShare{
       * 增加数据下载量，并将数据id添加到用户的下载库中
       * 参数：所下载数据的id
       */
-    function addDownloads(uint _dataSetId) public{
+    function addDownloads(uint _dataSetId, uint _point) public{
         dataSetCollection[_dataSetId].downloads++;
         hasDownloaded[msg.sender][_dataSetId] = true;
         userDownload[msg.sender].push(_dataSetId);
+        users[dataSetCollection[_dataSetId].addr].point += _point;
     }
     
     /**
@@ -82,9 +90,14 @@ contract DataShare{
       * 参数：所要查看的数据id
       * 返回值：数据名字，数据分类，数据上传者，数据文件hash，下载量，上传时间，当前数据状态
       */
-    function getDataSet(uint _dataSetId) public view returns (string memory, string memory, string memory, string memory, string memory, uint, uint, DataSetStatus){
+    function getDataSet(uint _dataSetId) public view returns (string memory, string memory, string memory, string memory, string memory, uint, uint){
         DataSet memory dataset = dataSetCollection[_dataSetId];
-        return (dataset.name, dataset.category, dataset.description, dataset.uper, dataset.dataLink, dataset.downloads, dataset.uploadTime, dataset.status);
+        return (dataset.name, dataset.category, dataset.description, dataset.uper, dataset.dataLink, dataset.downloads, dataset.uploadTime);
+    }
+    
+    /* 返回数据名字，用于模糊搜索 */
+    function getDataName(uint _dataSetId) public view returns (string memory){
+        return dataSetCollection[_dataSetId].name;
     }
 
     /* 返回当前链上的文件数量 */
@@ -102,8 +115,7 @@ contract DataShare{
         return userDownload[msg.sender];
     }
     
-    /* 下架数据 */
-    function dropData(uint _dataSetId) public{
-        dataSetCollection[_dataSetId].status = DataSetStatus.invalid;
+    function getDataIdByCategory(string memory _category) public view returns (uint[] memory){
+        return dataByCategory[_category];
     }
 }

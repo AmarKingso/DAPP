@@ -61,12 +61,23 @@
               <a class="nav-link" href="upload.html">上传数据集</a>
             </li>
             <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" id="usr-dp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">数据分类</a>
+              <div class="dropdown-menu mt-0" id="category-menu">
+                <a class="dropdown-item" href="list.html?type=综合">综合</a>
+                <a class="dropdown-item" href="list.html?type=科研或学术资料">科研或学术资料</a>
+                <a class="dropdown-item" href="list.html?type=娱乐资源">娱乐资源</a>
+                <a class="dropdown-item" href="list.html?type=软件项目">软件项目</a>
+                <a class="dropdown-item" href="list.html?type=数据集（数据挖掘）">数据集（数据挖掘）</a>
+                <a class="dropdown-item" href="list.html?type=其他">其他</a>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" id="usr-dp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">我的</a>
-              <div class="dropdown-menu" id="usr-menu">
+              <div class="dropdown-menu mt-0" id="usr-menu">
                 <p class="dropdown-item my-0 disabled" id="usr-name">未注册</p>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" id="usr-upload" href="myupload.html">我的上传</a>
-                <a class="dropdown-item" id="usr-download" href="mydownload.html">我的下载</a>
+                <a class="dropdown-item" id="usr-upload" href="list.html?type=myupload">我的上传</a>
+                <a class="dropdown-item" id="usr-download" href="list.html?type=mydownload">我的下载</a>
               </div>
             </li>
           </ul>
@@ -97,7 +108,7 @@
       </div>
     </header>
     <section class="data-section" id="data-section">
-      <div class="container">
+      <div class="container mt-3">
         <div class="row" id="data-list" data-aos-once="true"></div>
         <div class="row my-3">
           <ul class="custom-pagination mx-auto">

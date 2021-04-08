@@ -34,13 +34,7 @@ window.App = {
 
     // 渲染首页下方数据列表
     if($('#data-section').length > 0){
-      renderDataList(0);
-    }
-    if($('#up-data-section').length > 0){
-      renderDataList(1);
-    }
-    if($('#down-data-section').length > 0){
-      renderDataList(2);
+      renderDataList();
     }
     
     if($('#dataset-info').length > 0){
@@ -78,7 +72,13 @@ window.App = {
 
     // 根据id跳转到数据集详情页面
     $('#search-btn').click(function(){
-      jumpToDetail();
+      let keyword = $('#search-id').val();
+      if(/^[\s]*$/.test(keyword.trim())){
+        window.alert('输入无效!');
+      }
+      else{
+        window.location.href = "list.html?keyword=" + keyword.trim();
+      }
     });
 
     if($('#dataset-detail').length > 0){
@@ -184,7 +184,7 @@ async function uploadDataSetToBlockchain(params, dataLink){
   if(params['dataset-desc'] == ""){
     params['dataset-desc'] = "无";
   }
-  await App.instance.uploadData(params['dataset-name'], params['dataset-category'], params['dataset-desc'], dataLink, 1, {from: App.addr[0]});
+  await App.instance.uploadData(params['dataset-name'], params['dataset-category'], params['dataset-desc'], dataLink, 100, {from: App.addr[0]});
   App.maxIndex++;
   console.log('Transaction complete!');
   autoJumpAfterWaiting();
@@ -230,25 +230,9 @@ function downloadFromIpfs(hash){
   x.send();
 }
 
-/* 根据搜索框中的值跳转至详情页 */
-function jumpToDetail(){
-  const searchId = $('#search-id').val();
-  if(!/^\d+$/.test(searchId)){
-    window.alert('格式错误，请输入数字');
-    return;
-  }
-
-  if(Number(searchId) > App.maxIndex){
-    window.alert('该数据集（ID：' + searchId + '）不存在');
-  }
-  else{
-    window.location.href = "detail.html?id=" + searchId;
-  }
-}
-
 /* 渲染详情页 */
 function renderDetailPage(id){
-  if(id > App.maxIndex){
+  if(Number(id) > App.maxIndex){
     window.location.href = "index.html";
   }
   DataShare.deployed().then(x=>{
@@ -271,7 +255,7 @@ function renderDetailPage(id){
         // 如果已经下过该数据，则再次下载不再增加下载量
         App.instance.checkHasDownload(id, {from: App.addr[0]}).then(async flag=>{
           if(!flag){
-            await App.instance.addDownloads(id, {from: App.addr[0]});
+            await App.instance.addDownloads(id, 10, {from: App.addr[0]});
             // 刷新页面的下载次数
             $('#res-downloads').text(function(i,origText){
               return (Number(origText.substr(0, origText.length - 3)) + 1) + "次下载";
@@ -294,27 +278,61 @@ function timestampToDate(time){
  * 渲染首页下方数据列表
  * 包括分页组件的生成，根据当前分页请求相应序号的数据
  */
-async function renderDataList(listType){
-  var capacity = 12;
-  var pagesCount = 0;
-  var curPage = 1;
-  var datalist;
+async function renderDataList(){
+  var capacity = 12;    // 每页显示多少个数据项
+  var pagesCount = 0;   // 一共的页数
+  var lastPage = 0;     // 最后一页的数据项个数
+  var curPage = 1;      // 当前页码
+  var datalist = [];
+  var param = new URLSearchParams(window.location.search);
 
   // 初次加载
-  if(listType == 0){
-    initListOfAllData(capacity);
+  if(!param.has('type') && !param.has('keyword')){
     pagesCount = Math.ceil(App.maxIndex / capacity);
-  }
-  else{
-    if(listType == 1){
-      datalist = (await App.instance.getUserAllUploadId({from: App.addr[0]})).map(Number);
+    lastPage = App.maxIndex % capacity;
+    if(pagesCount == 1){
+      initDatalist(Array.from({length: lastPage},(item, index)=>index+1));
     }
     else{
+      initDatalist(Array.from({length: capacity},(item, index)=>App.maxIndex-capacity+index+1));
+    }
+  }
+  else if(param.has('keyword')){
+    let keyword = param.get('keyword');
+    let keywords = keyword.replace(/\s+/g, ' ').split(' ');
+    $('h4').html('搜索结果');
+    for(var i = 1; i <= App.maxIndex; i++){
+      let dataname = (await App.instance.getDataName(i, {from: App.addr[0]}));
+      for(var j = 0; j < keywords.length; j++){
+        if((new RegExp(keywords[j],'i')).test(dataname)){
+          datalist.push(i);
+          break;
+        }
+      }
+    }
+    let section = datalist.length < capacity ? datalist : datalist.slice(datalist.length - capacity, datalist.length);
+    pagesCount = Math.ceil(datalist.length / capacity);
+    lastPage = datalist.length % capacity;
+    initDatalist(section);
+  }
+  else{
+    let listType = param.get('type');
+    if(listType == "myupload"){
+      $('h4').html(App.account[0] + ' / 上传记录');
+      datalist = (await App.instance.getUserAllUploadId({from: App.addr[0]})).map(Number);
+    }
+    else if(listType == "mydownload"){
+      $('h4').html(App.account[0] + ' / 下载记录');
       datalist = (await App.instance.getUserAllDownloadId({from: App.addr[0]})).map(Number);
     }
-    let section = datalist.length < capacity ? datalist.slice(0) :  datalist.slice(0, capacity);
+    else{
+      $('h4').html('分类 / ' + listType);
+      datalist = (await App.instance.getDataIdByCategory(listType, {from: App.addr[0]})).map(Number);
+    }
+    let section = datalist.length < capacity ? datalist : datalist.slice(datalist.length - capacity, datalist.length);
     pagesCount = Math.ceil(datalist.length / capacity);
-    initAPartalListOfData(section);
+    lastPage = datalist.length % capacity;
+    initDatalist(section);
   }
   
   generatePagination(pagesCount);
@@ -344,32 +362,27 @@ async function renderDataList(listType){
       adjustPagination($(this), pagesCount);
     }
     // 跳转页面后更新item中的值，重新渲染列表
-    if(listType == 0){
-      changeItemContent(capacity, Array.from({length:capacity},(item, index)=> App.maxIndex - (curPage - 1) * capacity - index));
+    let section;
+    if(!param.has('type') && !param.has('keyword')){
+      if(curPage != pagesCount || lastPage == 0){
+        section = Array.from({length:capacity},(item, index)=>App.maxIndex-curPage*capacity+index+1);
+      }
+      else{
+        section = Array.from({length:lastPage},(item, index)=>index+1);
+      }
     }
     else{
-      let section = curPage == pagesCount ? datalist.slice((curPage - 1) * capacity) :  datalist.slice((curPage - 1) * capacity, curPage * capacity);
-      changeItemContent(capacity, section);
+      section = (curPage == pagesCount && lastPage != 0) ? datalist.slice(0, lastPage) : datalist.slice(datalist.length-curPage*capacity, datalist.length-(curPage-1)*capacity);
     }
+    changeItemContent(capacity, section);
   });
 }
 
-function initListOfAllData(itemCount){
-  for(var i = 0; i < itemCount; i++){
-    if(App.maxIndex > i){
-      let id = App.maxIndex - i;
-      App.instance.getDataSet(id).then(res=>{
-        $('#data-list').append(buildDataItem(id, res));
-      });
-    }
-  }
-}
-
-function initAPartalListOfData(section){
-  for(var i = 0; i < section.length; i++){
+function initDatalist(section){
+  for(var i = section.length - 1; i >= 0; i--){
     let id = section[i];
     App.instance.getDataSet(id).then(res=>{
-      $('#data-list').append(buildDataItem(id,res));
+      $('#data-list').append(buildDataItem(id, res));
     });
   }
 }
@@ -395,8 +408,8 @@ function buildDataItem(id, dataInfo){
 /* 根据当前页改变item中的值 */
 function changeItemContent(itemCount, section){
   for(var i = 0; i < itemCount; i++){
-    let item = $('.data-item-content').eq(i);
-    if(i < section.length && section[i] <= App.maxIndex && section[i] > 0){
+    if(i < section.length){
+      let item = $('.data-item-content').eq(section.length - i - 1);
       let id = section[i];
       let content = item.children();
       App.instance.getDataSet(id).then(res=>{
@@ -413,7 +426,7 @@ function changeItemContent(itemCount, section){
       });
     }
     else{
-      item.parent().hide();
+      $('.data-item-content').eq(i).parent().hide();
     }
   }
 }
