@@ -5,13 +5,87 @@
     <title>DataShare</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="mydownload.css">
-
+    <link rel="stylesheet" type="text/css" href="dropmenu.css">
+    <link rel="stylesheet" type="text/css" href="pagination.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
     <script src="index.js"></script>
   </head>
 
   <body>
+    <div class="modal fade" id="set-name-modal" tabindex="-1" role="dialog" aria-labelledby="set-name-modal-label" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="set-name-modal-label">欢迎来到DataShare！</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>，欢迎来到本平台，你还未为自己命名哦，先为自己取个好听的名字，然后开启您的DataShare之旅吧！</p>
+            <input type="text" class="form-control" id="account-name" placeholder="取个好听的名字吧~(输入1-12个非空格字符)" required>
+            <div class="alert alert-success py-1 mt-1" role="alert" style="display: none;"><small>格式正确！</small></div>
+            <div class="alert alert-danger py-1 mt-1" role="alert" style="display: none;"><small>格式错误！请保证名字为1~12个非空格字符！</small></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="okay-btn">确定</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark">
+      <a class="navbar-brand" href="index.html">DataShare</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse bg-dark" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">主页</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="upload.html">上传数据集</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="usr-dp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">我的</a>
+            <div class="dropdown-menu" id="usr-menu">
+              <p class="dropdown-item my-0 disabled" id="usr-name">未注册</p>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" id="usr-upload" href="myupload.html">我的上传</a>
+              <a class="dropdown-item" id="usr-download" href="mydownload.html">我的下载</a>
+            </div>
+          </li>
+        </ul>
+        <div class="input-group col-sm-3" id="search-box">
+          <input class="form-control" id="search-id" type="search" placeholder="数据集ID">
+          <span class="input-group-btn">
+            <button class="btn btn-outline-light" id="search-btn">搜索</button>
+          </span>
+        </div>
+      </div>
+    </nav>
+
+    <header>
+      <div class="container">
+        <div class="row py-3">
+          <h4 class="text-white mb-0">用户 / 已下载数据</h4>
+        </div>
+      </div>
+    </header>
+    
+    <section class="data-section" id="down-data-section">
+      <div class="container">
+        <div class="row" id="data-list" data-aos-once="true"></div>
+        <div class="row my-3">
+          <ul class="custom-pagination mx-auto">
+            <li><a class="prev-page" href="#data-section" style="display:none;">上一页</a></li>
+            <li><a class="active" href="#data-section">1</a></li>
+            <strong class="prev-ellipsis" style="display:none;">...</strong>
+          </ul>
+        </div>
+      </div>
+    </section>
   </body>
 </html>

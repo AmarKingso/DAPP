@@ -1,6 +1,6 @@
 import { default as Web3 } from "web3";
 import { default as contract } from "truffle-contract";
-import dataShareArtifacts from "../../build/contracts/DataShare.json";
+import dataShareArtifacts from "../../../build/contracts/DataShare.json";
 
 var DataShare = contract(dataShareArtifacts);
 
@@ -34,7 +34,13 @@ window.App = {
 
     // 渲染首页下方数据列表
     if($('#data-section').length > 0){
-      renderDataList();
+      renderDataList(0);
+    }
+    if($('#up-data-section').length > 0){
+      renderDataList(1);
+    }
+    if($('#down-data-section').length > 0){
+      renderDataList(2);
     }
     
     if($('#dataset-info').length > 0){
@@ -86,12 +92,11 @@ window.App = {
 window.addEventListener('load', function(){
   // 检查新版MetaMask
   if (window.ethereum) {
-    App.web3Provider = window.ethereum;
     try {
       // 请求用户账号授权
       window.ethereum.enable().then((e)=>{
         // 授权后对页面进行渲染
-        web3 = new Web3(App.web3Provider);
+        web3 = new Web3(window.ethereum);
         App.start();
       });
     } catch (error) {
@@ -100,8 +105,7 @@ window.addEventListener('load', function(){
     }
   }
   else{
-    App.web3Provider = new Web3.providers.HttpProvider("http://127.0.0.1:8546");
-    web3 = new Web3(App.web3Provider);
+    web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8546"));
     App.start();
   }
 });
@@ -290,21 +294,31 @@ function timestampToDate(time){
  * 渲染首页下方数据列表
  * 包括分页组件的生成，根据当前分页请求相应序号的数据
  */
-function renderDataList(){
-  var pagesCount = Math.ceil(App.maxIndex / 12);
+async function renderDataList(listType){
+  var capacity = 12;
+  var pagesCount = 0;
   var curPage = 1;
+  var datalist;
 
-  generatePagination(pagesCount);
   // 初次加载
-  for(var i = 0; i < 12; i++){
-    if(App.maxIndex > (curPage - 1)*12 + i){
-      let id = App.maxIndex - i;
-      App.instance.getDataSet(id).then(res=>{
-        $('#data-list').append(buildDataItem(id, res));
-      });
-    }
+  if(listType == 0){
+    initListOfAllData(capacity);
+    pagesCount = Math.ceil(App.maxIndex / capacity);
   }
-
+  else{
+    if(listType == 1){
+      datalist = (await App.instance.getUserAllUploadId({from: App.addr[0]})).map(Number);
+    }
+    else{
+      datalist = (await App.instance.getUserAllDownloadId({from: App.addr[0]})).map(Number);
+    }
+    let section = datalist.length < capacity ? datalist.slice(0) :  datalist.slice(0, capacity);
+    pagesCount = Math.ceil(datalist.length / capacity);
+    initAPartalListOfData(section);
+  }
+  
+  generatePagination(pagesCount);
+  
   // 为不同分页按钮绑定不同方法
   $('.custom-pagination li a').click(function(){
     var idx;
@@ -330,8 +344,34 @@ function renderDataList(){
       adjustPagination($(this), pagesCount);
     }
     // 跳转页面后更新item中的值，重新渲染列表
-    changeItemContent(curPage);
+    if(listType == 0){
+      changeItemContent(capacity, Array.from({length:capacity},(item, index)=> App.maxIndex - (curPage - 1) * capacity - index));
+    }
+    else{
+      let section = curPage == pagesCount ? datalist.slice((curPage - 1) * capacity) :  datalist.slice((curPage - 1) * capacity, curPage * capacity);
+      changeItemContent(capacity, section);
+    }
   });
+}
+
+function initListOfAllData(itemCount){
+  for(var i = 0; i < itemCount; i++){
+    if(App.maxIndex > i){
+      let id = App.maxIndex - i;
+      App.instance.getDataSet(id).then(res=>{
+        $('#data-list').append(buildDataItem(id, res));
+      });
+    }
+  }
+}
+
+function initAPartalListOfData(section){
+  for(var i = 0; i < section.length; i++){
+    let id = section[i];
+    App.instance.getDataSet(id).then(res=>{
+      $('#data-list').append(buildDataItem(id,res));
+    });
+  }
 }
 
 /* 创建列表中一个数据集元素 */
@@ -353,11 +393,11 @@ function buildDataItem(id, dataInfo){
 }
 
 /* 根据当前页改变item中的值 */
-function changeItemContent(curPage){
-  for(var i = 0; i < 12; i++){
+function changeItemContent(itemCount, section){
+  for(var i = 0; i < itemCount; i++){
     let item = $('.data-item-content').eq(i);
-    if(App.maxIndex > (curPage - 1)*12 + i){
-      let id = App.maxIndex - (curPage - 1)*12 - i;
+    if(i < section.length && section[i] <= App.maxIndex && section[i] > 0){
+      let id = section[i];
       let content = item.children();
       App.instance.getDataSet(id).then(res=>{
         $(content[0]).html(res[0]);
