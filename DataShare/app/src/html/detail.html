@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>DataShare</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="detail.css">
     <link rel="stylesheet" type="text/css" href="dropmenu.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
@@ -69,31 +70,53 @@
           </li>
         </ul>
         <div class="input-group col-sm-3" id="search-box">
-          <input class="form-control" id="search-id" type="search" placeholder="数据集ID">
+          <input class="form-control" id="search-id" type="search" placeholder="输入关键字">
           <span class="input-group-btn">
             <button class="btn btn-outline-light" id="search-btn">搜索</button>
           </span>
         </div>
       </div>
     </nav>
-    <br>
-    <br>
-    <div class="container-fluid">
+    <div class="container my-5 py-5">
       <div class="row justify-content-center">
-        <div class="col-sm-6">
-          <div class="card" id="dataset-detail">
-            <div class="card-header" id="res-id">ID</div>
+        <div class="col-sm-6 my-5">
+          <div class="card border-dark" id="dataset-detail">
+            <div class="card-header bg-dark text-white" id="res-id">ID</div>
             <div class="card-body">
               <h4 class="card-title" id="res-name">名称</h4>
               <h6 class="card-subtitle text-muted mb-3" id="res-uper">上传者</h6>
               <p class="card-text" id="res-desc">描述</p>
               <p class="card-text text-muted"><small id="res-time">上传时间</small> · <small id="res-category"></small></p>
               <button class="btn btn-dark" id="download-btn" type="button">下载</button>
-              <p class="card-text"><small class="text-muted" id="res-downloads">下载量</small></p>
+              <p class="card-text">
+                <small class="text-muted" id="res-downloads">下载量</small>
+                · 
+                <small class="text-muted" id="res-rate">暂无评价</small>
+              </p>
+            </div>
+            <div class="card-footer">
+              <div class="btn-group w-100" role="group">
+                <button type="button" class="btn border-right favor-btn"><i class="fa fa-thumbs-o-up"></i></button>
+                <button type="button" class="btn border-left against-btn"><i class="fa fa-thumbs-o-down"></i></button>
+              </div>
             </div>
           </div>
         </div>
       </div> 
     </div>
+
+    <footer>
+      <div class="row bg-dark">
+        <div class="col-6 col-sm-6 my-5 mx-auto text-white text-center">
+          Email: diosmaikingso@gmail.com
+          <br>
+          MyWebsite: amarkingso.gitee.io
+          <br>
+          WeChat: AmarSo99
+          <br>
+          本网页仅作学术使用，请勿商用，如有疑问请联系本人
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

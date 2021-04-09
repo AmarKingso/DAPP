@@ -27,10 +27,13 @@ window.App = {
     this.account = await this.instance.getSelfInfo({from: this.addr[0]});
     // 用户还未注册则弹出模态框进行注册
     if(this.account[2] == false){
+      $('#usr-upload').addClass('disabled');
+      $('#usr-download').addClass('disabled');
       registerAccount();
     }
-
-    changeNavbrByAccount();
+    else{
+      $('#usr-name').html(App.account[0] + '<small id="usr-point"> ' + App.account[1].toString() + '积分</small>');
+    }
 
     // 渲染首页下方数据列表
     if($('#data-section').length > 0){
@@ -137,21 +140,11 @@ async function registerAccount(){
     App.account[0] = $('#account-name').val();
     App.account[2] = true;
     await App.instance.setUser(App.account[0], {from: App.addr[0]});
-    $('#navbarNav li.dropdown').show();
+    $('#usr-upload').removeClass('disabled');
+    $('#usr-download').removeClass('disabled');
   });
 
   $('#set-name-modal').modal();
-}
-
-/* 根据用户是否注册来改变导航栏 */
-function changeNavbrByAccount(){
-  if(App.account[2] == false){
-    $('#navbarNav li.dropdown').hide();
-  }
-  else{
-    $('#usr-name').html(App.account[0] + '<small id="usr-point"> ' + App.account[1].toString() + '积分</small>');
-    $('#navbarNav li.dropdown').show();
-  }
 }
 
 /* 上传数据 */
@@ -236,15 +229,42 @@ function renderDetailPage(id){
     window.location.href = "index.html";
   }
   DataShare.deployed().then(x=>{
-    x.getDataSet(id).then(res=>{
-      $('#res-id').html(id);
+    x.getDataSet(id).then(async res=>{
+      $('#res-id').html('ID - ' + id);
       $('#res-name').html(res[0]);
       $('#res-category').html(res[1]);
       $('#res-desc').html(res[2]);
       $('#res-uper').html(res[3]);
       $('#res-downloads').html(res[5] + '次下载');
       $('#res-time').html(timestampToDate(res[6].toString()));
-      /* 下载数据集按钮点击事件 */
+
+      // 计算好评率
+      let goodRate = 100;
+      if(Number(res[8]) > 0){
+        goodRate = Math.round(Number(res[7]) * 100 / Number(res[8]));
+        $('#res-rate').html(goodRate + '% 好评（' + res[8] + '个评价）');
+      }
+
+      // 绑定点赞和踩的点击事件
+      $('.favor-btn').click(async function(){
+        await App.instance.setEvaluation(id, true, {from: App.addr[0]});
+        $('.card-footer').hide();
+        $('#res-rate').html(Math.round((Number(res[7]) + 1) * 100 / (Number(res[8]) + 1)) + '% 好评（'
+        + (Number(res[8])+1) + '个评价）');
+      });
+      $('.against-btn').click(async function(){
+        await App.instance.setEvaluation(id, false, {from: App.addr[0]});
+        $('.card-footer').hide();
+        $('#res-rate').html(Math.round(Number(res[7]) * 100 / (Number(res[8]) + 1)) + '% 好评（'
+        + (Number(res[8])+1) + '个评价）');
+      });
+      
+      let relation = Number(await App.instance.checkHasDownload(id, {from: App.addr[0]}));
+      // 已经下载了但还未评价
+      if(relation == 1){
+        $('.card-footer').show();
+      }
+      // 下载数据集按钮点击事件 
       $('#download-btn').click(async function(){
         if(App.account[2] == false){
           $('#set-name-modal').find('p').text('你还没为自己取名，命名后可继续下一步操作。');
@@ -252,17 +272,20 @@ function renderDetailPage(id){
           return false;
         }
 
-        // 如果已经下过该数据，则再次下载不再增加下载量
-        App.instance.checkHasDownload(id, {from: App.addr[0]}).then(async flag=>{
-          if(!flag){
-            await App.instance.addDownloads(id, 10, {from: App.addr[0]});
-            // 刷新页面的下载次数
-            $('#res-downloads').text(function(i,origText){
-              return (Number(origText.substr(0, origText.length - 3)) + 1) + "次下载";
-            });
+        // 如果没下载过该数据，则首次下载需要发起交易；反之可直接下载
+        if(relation == 0){
+          // 当评价数不少于10，且好评率小于30%的数据，其他用户下载不再给上传者增加积分
+          if(goodRate < 30 && res[8] >= 10){
+            goodRate = 0;
           }
-          downloadFromIpfs(res[4]);
-        });
+          await App.instance.addDownloads(id, Math.round(0.1 * goodRate), {from: App.addr[0]});
+          $('.card-footer').show();
+          // 刷新页面的下载次数
+          $('#res-downloads').text(function(i,origText){
+            return (Number(origText.substr(0, origText.length - 3)) + 1) + "次下载";
+          });
+        }
+        downloadFromIpfs(res[4]);
       });
       $('#dataset-detail').show();
     });
@@ -287,9 +310,12 @@ async function renderDataList(){
   var param = new URLSearchParams(window.location.search);
 
   // 初次加载
-  if(!param.has('type') && !param.has('keyword')){
+  if(!param.has('type') && !param.has('keyword')){    // 首页的列表
     pagesCount = Math.ceil(App.maxIndex / capacity);
     lastPage = App.maxIndex % capacity;
+    if(pagesCount == 0){
+      return;
+    }
     if(pagesCount == 1){
       initDatalist(Array.from({length: lastPage},(item, index)=>index+1));
     }
@@ -297,7 +323,7 @@ async function renderDataList(){
       initDatalist(Array.from({length: capacity},(item, index)=>App.maxIndex-capacity+index+1));
     }
   }
-  else if(param.has('keyword')){
+  else if(param.has('keyword')){    // 搜索后的结果列表
     let keyword = param.get('keyword');
     let keywords = keyword.replace(/\s+/g, ' ').split(' ');
     $('h4').html('搜索结果');
@@ -315,7 +341,7 @@ async function renderDataList(){
     lastPage = datalist.length % capacity;
     initDatalist(section);
   }
-  else{
+  else{     // 分类列表
     let listType = param.get('type');
     if(listType == "myupload"){
       $('h4').html(App.account[0] + ' / 上传记录');
@@ -389,7 +415,7 @@ function initDatalist(section){
 
 /* 创建列表中一个数据集元素 */
 function buildDataItem(id, dataInfo){
-  let item = $('<div class="col-12 col-sm-12 col-md-6 col-lg-4 px-2 mb-4 mb-lg-3 aos-init" \
+  let item = $('<div class="data-item col-12 col-sm-12 col-md-6 col-lg-4 px-2 mb-4 mb-lg-3 aos-init" \
   data-aos="fade-up"></div>');
   let content = $('<div class="data-item-content"></div>');
   content.append('<h4 id="item-name">' + dataInfo[0] + '</h4>');
@@ -398,6 +424,15 @@ function buildDataItem(id, dataInfo){
   content.append('<small class="text-muted" id="item-category"> · ' + dataInfo[1]);
   content.append('<p id="item-desc">' + dataInfo[2] + '</p>');
   content.append('<small class="text-muted" id="item-downloads">' + dataInfo[5] + '次下载</small>');
+  let goodRate = 100;
+  if(Number(dataInfo[8]) > 0){
+    goodRate = Math.round(Number(dataInfo[7]) * 100 / Number(dataInfo[8]));
+    content.append('<small class="text-muted" id="item-rate"> · ' + goodRate + '% 好评（' + dataInfo[8] + '个评价）</small>');
+  }
+  else{
+    content.append('<small class="text-muted" id="item-rate"> · 暂无评价</small>');
+  }
+  
   content.on('click', function(e){
     window.location.href = "detail.html?id=" + id;
   });
@@ -416,9 +451,17 @@ function changeItemContent(itemCount, section){
         $(content[0]).html(res[0]);
         $(content[1]).html(res[3]);
         $(content[2]).html(timestampToDate(res[6].toString()));
-        $(content[3]).html(res[1] + '次下载');
+        $(content[3]).html(' · ' + res[1]);
         $(content[4]).html(res[2]);
         $(content[5]).html(res[5] + '次下载');
+        let goodRate = 100;
+        if(Number(res[8]) > 0){
+          goodRate = Math.round(Number(res[7]) * 100 / Number(res[8]));
+          $(content[6]).html(' · ' + goodRate + '% 好评（' + res[8] + '个评价）');
+        }
+        else{
+          $(content[6]).html(' · 暂无评价');
+        }
         item.off('click').on('click', function(e){
           window.location.href = "detail.html?id=" + id;
         });

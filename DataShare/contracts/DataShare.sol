@@ -2,12 +2,12 @@
 pragma solidity >=0.4.21;
 
 contract DataShare{
-    enum UserWithTheData { independent, downloaded, evaluated }
+    enum Relation { independent, downloaded, evaluated, owner }     //分别为：未下载，已下载，已评价，数据拥有者
 
     uint dataSetIndex;
     mapping(uint => DataSet) dataSetCollection;       //id到数据的映射
     mapping(address => uint[]) uperAllUpload;  //上传者 => 其上传的所有数据集id
-    mapping(address => mapping(uint => bool)) hasDownloaded;    //用户是否下载了当前数据
+    mapping(address => mapping(uint => Relation)) dataStatus;    //用户是否下载了当前数据
     mapping(address => uint[]) userDownload;    //存储用户下载的所有数据
     mapping(address => UserInfo) users;      //用户列表
     mapping(string => uint[]) dataByCategory;       //根据分类划分数据
@@ -22,6 +22,8 @@ contract DataShare{
         string dataLink;        //数据集的链接
         uint downloads;         //下载量
         uint uploadTime;        //上传时间
+        uint favorable;         //点赞量
+        uint evaluationCount;   //评价总数
     }
 
     struct UserInfo{
@@ -61,26 +63,26 @@ contract DataShare{
       */
     function uploadData(string memory _name, string memory _category, string memory _description, string memory _dataLink, uint _point) public{
         dataSetIndex++;
-        DataSet memory dataset = DataSet(dataSetIndex, msg.sender, _name, _category, _description, users[msg.sender].name, _dataLink, 0, block.timestamp);
+        DataSet memory dataset = DataSet(dataSetIndex, msg.sender, _name, _category, _description, users[msg.sender].name, _dataLink, 0, block.timestamp, 0, 0);
         dataSetCollection[dataSetIndex] = dataset;
         dataByCategory[_category].push(dataSetIndex);
         uperAllUpload[msg.sender].push(dataSetIndex);
-        hasDownloaded[msg.sender][dataSetIndex] = true;
+        dataStatus[msg.sender][dataSetIndex] = Relation.owner;
         users[msg.sender].point += _point;
     }
     
-    /* 检查当前用户是否下载过该id的数据 */
-    function checkHasDownload(uint _dataSetId) public view returns (bool){
-        return hasDownloaded[msg.sender][_dataSetId];
+    /* 检查当前用户与检索数据的关系 */
+    function checkHasDownload(uint _dataSetId) public view returns (Relation){
+        return dataStatus[msg.sender][_dataSetId];
     }
 
     /**
       * 增加数据下载量，并将数据id添加到用户的下载库中
-      * 参数：所下载数据的id
+      * 参数：所下载数据的id，本次下载给上传者增加的积分
       */
     function addDownloads(uint _dataSetId, uint _point) public{
         dataSetCollection[_dataSetId].downloads++;
-        hasDownloaded[msg.sender][_dataSetId] = true;
+        dataStatus[msg.sender][_dataSetId] = Relation.downloaded;
         userDownload[msg.sender].push(_dataSetId);
         users[dataSetCollection[_dataSetId].addr].point += _point;
     }
@@ -88,11 +90,11 @@ contract DataShare{
     /**
       * 获得数据信息
       * 参数：所要查看的数据id
-      * 返回值：数据名字，数据分类，数据上传者，数据文件hash，下载量，上传时间，当前数据状态
+      * 返回值：数据名字，数据分类，数据上传者，数据文件hash，下载量，上传时间，当前数据状态，点赞量，评价数
       */
-    function getDataSet(uint _dataSetId) public view returns (string memory, string memory, string memory, string memory, string memory, uint, uint){
+    function getDataSet(uint _dataSetId) public view returns (string memory, string memory, string memory, string memory, string memory, uint, uint, uint, uint){
         DataSet memory dataset = dataSetCollection[_dataSetId];
-        return (dataset.name, dataset.category, dataset.description, dataset.uper, dataset.dataLink, dataset.downloads, dataset.uploadTime);
+        return (dataset.name, dataset.category, dataset.description, dataset.uper, dataset.dataLink, dataset.downloads, dataset.uploadTime, dataset.favorable, dataset.evaluationCount);
     }
     
     /* 返回数据名字，用于模糊搜索 */
@@ -115,7 +117,17 @@ contract DataShare{
         return userDownload[msg.sender];
     }
     
+    /* 返回该类别下的全部数据id */
     function getDataIdByCategory(string memory _category) public view returns (uint[] memory){
         return dataByCategory[_category];
+    }
+    
+    /* 根据用户评价更改数据集评价 */
+    function setEvaluation(uint _dataSetId, bool isGood) public{
+        if(isGood){
+            dataSetCollection[_dataSetId].favorable++;
+        }
+        dataSetCollection[_dataSetId].evaluationCount++;
+        dataStatus[msg.sender][_dataSetId] = Relation.evaluated;
     }
 }

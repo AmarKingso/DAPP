@@ -1,3 +1,22 @@
+html,body{
+    width: 100%;
+    overflow-x: hidden;
+    background-color: rgb(246, 246, 246);
+}
+
 #dataset-detail{
     display: none;
+}
+
+.card-footer{
+    display: none;
+    background-color: white;
+}
+
+.favor-btn:hover{
+    color: green;
+}
+
+.against-btn:hover{
+    color: red;
 }
