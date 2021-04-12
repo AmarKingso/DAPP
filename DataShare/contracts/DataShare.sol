@@ -81,6 +81,9 @@ contract DataShare{
       * 参数：所下载数据的id，本次下载给上传者增加的积分
       */
     function addDownloads(uint _dataSetId, uint _point) public{
+        if(checkHasDownload(_dataSetId) != Relation.independent){
+            return;
+        }
         dataSetCollection[_dataSetId].downloads++;
         dataStatus[msg.sender][_dataSetId] = Relation.downloaded;
         userDownload[msg.sender].push(_dataSetId);
@@ -94,7 +97,12 @@ contract DataShare{
       */
     function getDataSet(uint _dataSetId) public view returns (string memory, string memory, string memory, string memory, string memory, uint, uint, uint, uint){
         DataSet memory dataset = dataSetCollection[_dataSetId];
-        return (dataset.name, dataset.category, dataset.description, dataset.uper, dataset.dataLink, dataset.downloads, dataset.uploadTime, dataset.favorable, dataset.evaluationCount);
+        if(checkHasDownload(_dataSetId) != Relation.independent){
+            return (dataset.name, dataset.category, dataset.description, dataset.uper, dataset.dataLink, dataset.downloads, dataset.uploadTime, dataset.favorable, dataset.evaluationCount);
+        }
+        else{
+            return (dataset.name, dataset.category, dataset.description, dataset.uper, "unknown", dataset.downloads, dataset.uploadTime, dataset.favorable, dataset.evaluationCount);
+        }
     }
     
     /* 返回数据名字，用于模糊搜索 */
@@ -124,6 +132,9 @@ contract DataShare{
     
     /* 根据用户评价更改数据集评价 */
     function setEvaluation(uint _dataSetId, bool isGood) public{
+        if(checkHasDownload(_dataSetId) != Relation.downloaded){
+            return;
+        }
         if(isGood){
             dataSetCollection[_dataSetId].favorable++;
         }
