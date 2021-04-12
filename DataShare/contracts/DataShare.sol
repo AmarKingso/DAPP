@@ -95,13 +95,18 @@ contract DataShare{
       * 参数：所要查看的数据id
       * 返回值：数据名字，数据分类，数据上传者，数据文件hash，下载量，上传时间，当前数据状态，点赞量，评价数
       */
-    function getDataSet(uint _dataSetId) public view returns (string memory, string memory, string memory, string memory, string memory, uint, uint, uint, uint){
+    function getDataSet(uint _dataSetId) public view returns (string memory, string memory, string memory, string memory, uint, uint, uint, uint){
         DataSet memory dataset = dataSetCollection[_dataSetId];
-        if(checkHasDownload(_dataSetId) != Relation.independent){
-            return (dataset.name, dataset.category, dataset.description, dataset.uper, dataset.dataLink, dataset.downloads, dataset.uploadTime, dataset.favorable, dataset.evaluationCount);
+        return (dataset.name, dataset.category, dataset.description, dataset.uper, dataset.downloads, dataset.uploadTime, dataset.favorable, dataset.evaluationCount);
+    }
+
+    /* 根据用户是否下载数据来返回哈希 */
+    function getHash(uint _dataSetId) public view returns (string memory){
+        if(checkHasDownload(_dataSetId) == Relation.independent){
+            return "unknown";
         }
         else{
-            return (dataset.name, dataset.category, dataset.description, dataset.uper, "unknown", dataset.downloads, dataset.uploadTime, dataset.favorable, dataset.evaluationCount);
+            return dataSetCollection[_dataSetId].dataLink;
         }
     }
     

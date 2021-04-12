@@ -235,31 +235,32 @@ function renderDetailPage(id){
       $('#res-category').html(res[1]);
       $('#res-desc').html(res[2]);
       $('#res-uper').html(res[3]);
-      $('#res-downloads').html(res[5] + '次下载');
-      $('#res-time').html(timestampToDate(res[6].toString()));
+      $('#res-downloads').html(res[4] + '次下载');
+      $('#res-time').html(timestampToDate(res[5].toString()));
 
       // 计算好评率
       let goodRate = 100;
-      if(Number(res[8]) > 0){
-        goodRate = Math.round(Number(res[7]) * 100 / Number(res[8]));
-        $('#res-rate').html(goodRate + '% 好评（' + res[8] + '个评价）');
+      if(Number(res[7]) > 0){
+        goodRate = Math.round(Number(res[6]) * 100 / Number(res[7]));
+        $('#res-rate').html(goodRate + '% 好评（' + res[7] + '个评价）');
       }
 
       // 绑定点赞和踩的点击事件
       $('.favor-btn').click(async function(){
         await App.instance.setEvaluation(id, true, {from: App.addr[0]});
         $('.card-footer').hide();
-        $('#res-rate').html(Math.round((Number(res[7]) + 1) * 100 / (Number(res[8]) + 1)) + '% 好评（'
-        + (Number(res[8])+1) + '个评价）');
+        $('#res-rate').html(Math.round((Number(res[6]) + 1) * 100 / (Number(res[7]) + 1)) + '% 好评（'
+        + (Number(res[7])+1) + '个评价）');
       });
       $('.against-btn').click(async function(){
         await App.instance.setEvaluation(id, false, {from: App.addr[0]});
         $('.card-footer').hide();
-        $('#res-rate').html(Math.round(Number(res[7]) * 100 / (Number(res[8]) + 1)) + '% 好评（'
-        + (Number(res[8])+1) + '个评价）');
+        $('#res-rate').html(Math.round(Number(res[6]) * 100 / (Number(res[7]) + 1)) + '% 好评（'
+        + (Number(res[7])+1) + '个评价）');
       });
-      
+
       let relation = Number(await App.instance.checkHasDownload(id, {from: App.addr[0]}));
+      console.log(relation);
       // 已经下载了但还未评价
       if(relation == 1){
         $('.card-footer').show();
@@ -275,7 +276,7 @@ function renderDetailPage(id){
         // 如果没下载过该数据，则首次下载需要发起交易；反之可直接下载
         if(relation == 0){
           // 当评价数不少于10，且好评率小于30%的数据，其他用户下载不再给上传者增加积分
-          if(goodRate < 30 && res[8] >= 10){
+          if(goodRate < 30 && res[7] >= 10){
             goodRate = 0;
           }
           await App.instance.addDownloads(id, Math.round(0.1 * goodRate), {from: App.addr[0]});
@@ -285,7 +286,9 @@ function renderDetailPage(id){
             return (Number(origText.substr(0, origText.length - 3)) + 1) + "次下载";
           });
         }
-        downloadFromIpfs(res[4]);
+        App.instance.getHash(id, {from: App.addr[0]}).then(hash=>{
+          downloadFromIpfs(hash);
+        });
       });
       $('#dataset-detail').show();
     });
@@ -420,14 +423,14 @@ function buildDataItem(id, dataInfo){
   let content = $('<div class="data-item-content"></div>');
   content.append('<h4 id="item-name">' + dataInfo[0] + '</h4>');
   content.append('<p class="text-muted" id="item-uper">' + dataInfo[3] + '</p>');
-  content.append('<small class="text-muted" id="item-time">于 ' + timestampToDate(dataInfo[6].toString()) + '上传</small>')
+  content.append('<small class="text-muted" id="item-time">于 ' + timestampToDate(dataInfo[5].toString()) + '上传</small>')
   content.append('<small class="text-muted" id="item-category"> · ' + dataInfo[1]);
   content.append('<p id="item-desc">' + dataInfo[2] + '</p>');
-  content.append('<small class="text-muted" id="item-downloads">' + dataInfo[5] + '次下载</small>');
+  content.append('<small class="text-muted" id="item-downloads">' + dataInfo[4] + '次下载</small>');
   let goodRate = 100;
-  if(Number(dataInfo[8]) > 0){
-    goodRate = Math.round(Number(dataInfo[7]) * 100 / Number(dataInfo[8]));
-    content.append('<small class="text-muted" id="item-rate"> · ' + goodRate + '% 好评（' + dataInfo[8] + '个评价）</small>');
+  if(Number(dataInfo[7]) > 0){
+    goodRate = Math.round(Number(dataInfo[6]) * 100 / Number(dataInfo[7]));
+    content.append('<small class="text-muted" id="item-rate"> · ' + goodRate + '% 好评（' + dataInfo[7] + '个评价）</small>');
   }
   else{
     content.append('<small class="text-muted" id="item-rate"> · 暂无评价</small>');
@@ -450,14 +453,14 @@ function changeItemContent(itemCount, section){
       App.instance.getDataSet(id).then(res=>{
         $(content[0]).html(res[0]);
         $(content[1]).html(res[3]);
-        $(content[2]).html(timestampToDate(res[6].toString()));
+        $(content[2]).html(timestampToDate(res[5].toString()));
         $(content[3]).html(' · ' + res[1]);
         $(content[4]).html(res[2]);
-        $(content[5]).html(res[5] + '次下载');
+        $(content[5]).html(res[4] + '次下载');
         let goodRate = 100;
-        if(Number(res[8]) > 0){
-          goodRate = Math.round(Number(res[7]) * 100 / Number(res[8]));
-          $(content[6]).html(' · ' + goodRate + '% 好评（' + res[8] + '个评价）');
+        if(Number(res[7]) > 0){
+          goodRate = Math.round(Number(res[6]) * 100 / Number(res[7]));
+          $(content[6]).html(' · ' + goodRate + '% 好评（' + res[7] + '个评价）');
         }
         else{
           $(content[6]).html(' · 暂无评价');
