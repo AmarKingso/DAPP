@@ -57,6 +57,15 @@ contract DataShare{
         return (users[msg.sender].name, users[msg.sender].point, users[msg.sender].hasExist);
     }
 
+    function isDataUnique(string memory _dataLink) public view returns (bool, uint){
+        for(uint i = 0; i < dataSetIndex; i++){
+            if(keccak256(abi.encodePacked(dataSetCollection[i + 1].dataLink)) == keccak256(abi.encodePacked(_dataLink))){
+                return (false, i + 1);
+            }
+        }
+        return (true, 0);
+    }
+
     /**
       * 上传数据信息
       * 参数：数据名，数据分类，数据描述，数据文件hash，上传该文件所加积分点

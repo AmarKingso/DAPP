@@ -79,6 +79,15 @@ window.App = {
       if(/^[\s]*$/.test(keyword.trim())){
         window.alert('输入无效!');
       }
+      else if(/^ID[1-9][0-9]*$/i.test(keyword.trim())){
+        let idx = keyword.trim().substr(2);
+        if(idx > App.maxIndex){
+          window.alert('该数据（ID：' +  idx + '）不存在!');
+        }
+        else{
+          window.location.href = "detail.html?id=" + idx;
+        }
+      }
       else{
         window.location.href = "list.html?keyword=" + keyword.trim();
       }
@@ -152,7 +161,6 @@ function uploadData(reader, params){
   let dataLink;
   uploadDataOnIpfs(reader).then(link=>{
     dataLink = link;
-    console.log(link);
     uploadDataSetToBlockchain(params, dataLink);
   });
 }
@@ -162,7 +170,6 @@ function uploadDataOnIpfs(reader){
   return new Promise((resolve, reject)=>{
     let buffer = Buffer.from(reader.result);
     ipfs.add(buffer).then(res=>{
-      console.log(res[0].hash);
       resolve(res[0].hash);
     }).catch(err=>{
       console.error(err);
@@ -173,7 +180,11 @@ function uploadDataOnIpfs(reader){
 
 /* 上传数据信息至区块链 */
 async function uploadDataSetToBlockchain(params, dataLink){
-  console.log("Upload to blockchain params: ", params);
+  let unique = await App.instance.isDataUnique(dataLink);
+  if(!unique[0]){
+    window.alert('该数据在链上已存在，ID为' + unique[1]);
+    return;
+  }
   if(params['dataset-desc'] == ""){
     params['dataset-desc'] = "无";
   }
@@ -260,7 +271,6 @@ function renderDetailPage(id){
       });
 
       let relation = Number(await App.instance.checkHasDownload(id, {from: App.addr[0]}));
-      console.log(relation);
       // 已经下载了但还未评价
       if(relation == 1){
         $('.card-footer').show();
