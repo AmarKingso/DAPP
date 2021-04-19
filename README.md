@@ -64,7 +64,7 @@ geth --datadir node --rpc --port 30304 --rpcport 8546 --rpccorsdomain "*" --rpca
 5. 访问http://localhost:8080 。
 
 ## 重复启动项目
-1. 启动区块链：
+1. 启动区块链（公钥记得替换）：
 ```bash
 geth --datadir node --rpc --port 30304 --rpcport 8546 --rpccorsdomain "*" --rpcapi "eth,net,web3,admin,personal,miner" --networkid 2021 --nodiscover --unlock 'cDEa18962A2c7e921305439Eecbfc5D0C08D3140' --allow-insecure-unlock console
 ```
