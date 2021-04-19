@@ -48,9 +48,9 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"last_completed_migration\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"completed\",\"type\":\"uint256\"}],\"name\":\"setCompleted\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/home/amar/DAPP/DataShare/contracts/Migrations.sol\":\"Migrations\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/amar/DAPP/DataShare/contracts/Migrations.sol\":{\"keccak256\":\"0x9af86eeae1a5e69056cca1dc23c231a23e06c22bf83617168d350799e5e259f9\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d69947ed102a3d4e0ade83ab268377e5e57bb3c95cb47eea7da9d45ff76ffb2e\",\"dweb:/ipfs/QmXDcDX9n7rRw9h1JXVK9xEC2Dud3kDsm38fiofzeFFzqG\"]}},\"version\":1}",
-  "bytecode": "0x608060405234801561001057600080fd5b50600080546001600160a01b03191633179055610117806100326000396000f3fe6080604052348015600f57600080fd5b5060043610603c5760003560e01c8063445df0ac1460415780638da5cb5b14605b578063fdacd57614606c575b600080fd5b6047607d565b6040516052919060d8565b60405180910390f35b60616083565b6040516052919060c4565b607b607736600460ad565b6092565b005b60015481565b6000546001600160a01b031681565b6000546001600160a01b031633141560aa5760018190555b50565b60006020828403121560bd578081fd5b5035919050565b6001600160a01b0391909116815260200190565b9081526020019056fea26469706673582212203c71a6fcdcf64e8ebb75672cba02bd8f6ae6509fe4f961ee1a3e6e56599b38fa64736f6c63430008000033",
-  "deployedBytecode": "0x6080604052348015600f57600080fd5b5060043610603c5760003560e01c8063445df0ac1460415780638da5cb5b14605b578063fdacd57614606c575b600080fd5b6047607d565b6040516052919060d8565b60405180910390f35b60616083565b6040516052919060c4565b607b607736600460ad565b6092565b005b60015481565b6000546001600160a01b031681565b6000546001600160a01b031633141560aa5760018190555b50565b60006020828403121560bd578081fd5b5035919050565b6001600160a01b0391909116815260200190565b9081526020019056fea26469706673582212203c71a6fcdcf64e8ebb75672cba02bd8f6ae6509fe4f961ee1a3e6e56599b38fa64736f6c63430008000033",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"last_completed_migration\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"completed\",\"type\":\"uint256\"}],\"name\":\"setCompleted\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/home/amar/datashare/DAPP/DataShare/contracts/Migrations.sol\":\"Migrations\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/amar/datashare/DAPP/DataShare/contracts/Migrations.sol\":{\"keccak256\":\"0x9af86eeae1a5e69056cca1dc23c231a23e06c22bf83617168d350799e5e259f9\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d69947ed102a3d4e0ade83ab268377e5e57bb3c95cb47eea7da9d45ff76ffb2e\",\"dweb:/ipfs/QmXDcDX9n7rRw9h1JXVK9xEC2Dud3kDsm38fiofzeFFzqG\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50600080546001600160a01b03191633179055610117806100326000396000f3fe6080604052348015600f57600080fd5b5060043610603c5760003560e01c8063445df0ac1460415780638da5cb5b14605b578063fdacd57614606c575b600080fd5b6047607d565b6040516052919060d8565b60405180910390f35b60616083565b6040516052919060c4565b607b607736600460ad565b6092565b005b60015481565b6000546001600160a01b031681565b6000546001600160a01b031633141560aa5760018190555b50565b60006020828403121560bd578081fd5b5035919050565b6001600160a01b0391909116815260200190565b9081526020019056fea26469706673582212200689cd8f3d78c39c6d7fb760de8a0108652810137a1819a829f3aeb705e8ba8e64736f6c63430008000033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b5060043610603c5760003560e01c8063445df0ac1460415780638da5cb5b14605b578063fdacd57614606c575b600080fd5b6047607d565b6040516052919060d8565b60405180910390f35b60616083565b6040516052919060c4565b607b607736600460ad565b6092565b005b60015481565b6000546001600160a01b031681565b6000546001600160a01b031633141560aa5760018190555b50565b60006020828403121560bd578081fd5b5035919050565b6001600160a01b0391909116815260200190565b9081526020019056fea26469706673582212200689cd8f3d78c39c6d7fb760de8a0108652810137a1819a829f3aeb705e8ba8e64736f6c63430008000033",
   "immutableReferences": {},
   "generatedSources": [],
   "deployedGeneratedSources": [
@@ -447,9 +447,9 @@
   "sourceMap": "59:331:1:-:0;;;154:48;;;;;;;;;-1:-1:-1;177:5:1;:18;;-1:-1:-1;;;;;;177:18:1;185:10;177:18;;;59:331;;;;;;",
   "deployedSourceMap": "59:331:1:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;111:36;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;85:20;;;:::i;:::-;;;;;;;:::i;279:109::-;;;;;;:::i;:::-;;:::i;:::-;;111:36;;;;:::o;85:20::-;;;-1:-1:-1;;;;;85:20:1;;:::o;279:109::-;258:5;;-1:-1:-1;;;;;258:5:1;244:10;:19;240:26;;;345:24:::1;:36:::0;;;240:26;279:109;:::o;14:190:2:-;;126:2;114:9;105:7;101:23;97:32;94:2;;;147:6;139;132:22;94:2;-1:-1:-1;175:23:2;;84:120;-1:-1:-1;84:120:2:o;209:203::-;-1:-1:-1;;;;;373:32:2;;;;355:51;;343:2;328:18;;310:102::o;417:177::-;563:25;;;551:2;536:18;;518:76::o",
   "source": "// SPDX-License-Identifier: MIT\npragma solidity >=0.4.21;\n\ncontract Migrations {\n    address public owner;\n    uint public last_completed_migration;\n\n    constructor(){\n        owner = msg.sender;\n    }\n\n    modifier restricted() {\n        if (msg.sender == owner) _;\n    }\n\n    function setCompleted(uint completed) public restricted {\n        last_completed_migration = completed;\n    }\n}\n",
-  "sourcePath": "/home/amar/DAPP/DataShare/contracts/Migrations.sol",
+  "sourcePath": "/home/amar/datashare/DAPP/DataShare/contracts/Migrations.sol",
   "ast": {
-    "absolutePath": "/home/amar/DAPP/DataShare/contracts/Migrations.sol",
+    "absolutePath": "/home/amar/datashare/DAPP/DataShare/contracts/Migrations.sol",
     "exportedSymbols": {
       "Migrations": [
         550
@@ -838,7 +838,7 @@
     "src": "32:359:1"
   },
   "legacyAST": {
-    "absolutePath": "/home/amar/DAPP/DataShare/contracts/Migrations.sol",
+    "absolutePath": "/home/amar/datashare/DAPP/DataShare/contracts/Migrations.sol",
     "exportedSymbols": {
       "Migrations": [
         550
@@ -1234,12 +1234,12 @@
     "2021": {
       "events": {},
       "links": {},
-      "address": "0xE2C940B374033AfD7432beBEb10C46D3486C537C",
-      "transactionHash": "0x94f6b23a5504f17b31666071605f947a18c8fe5c65d1bc689236beabc7241320"
+      "address": "0xB54D390E4D8a8B7FED5768d26aE7e11F76ac2A3E",
+      "transactionHash": "0x7143d0775c3a7f4894661b62f8a0a30355f3ae6fd30a5d60abefb93d86e3ef3f"
     }
   },
   "schemaVersion": "3.3.4",
-  "updatedAt": "2021-04-14T07:41:07.057Z",
+  "updatedAt": "2021-04-19T10:41:35.284Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
